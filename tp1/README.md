@@ -28,7 +28,7 @@ make stop
 - `POST /predict` — Analyse de sentiment
 
 ```bash
-curl -X POST http://localhost:8080/predict \
+curl -X POST http://localhost:8081/predict \
   -H "Content-Type: application/json" \
   -d '{"text": "Ce produit est excellent !"}'
 ```

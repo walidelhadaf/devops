@@ -5,7 +5,7 @@ Dépôt regroupant les 5 TPs DevOps dans un même projet.
 | Dossier | Sujet | Statut |
 |---------|-------|--------|
 | [tp1/](tp1/) | Git & Docker — SentimentAI | Terminé |
-| [tp2/](tp2/) | Jenkins pipeline | À faire |
+| [tp2/](tp2/) | Jenkins pipeline | En cours |
 | [tp3/](tp3/) | SonarQube & Trivy | À faire |
 | [tp4/](tp4/) | Terraform IaC | À faire |
 | [tp5/](tp5/) | Monitoring Prometheus/Grafana | À faire |
@@ -28,3 +28,14 @@ make tp1-test
 make tp1-run
 make tp1-stop
 ```
+
+## TP2 — Commandes Jenkins
+
+```bash
+cd tp2
+./setup.sh          # démarre Jenkins + installe Docker CLI
+make jenkins-logs
+make jenkins-password
+```
+
+Jenkins : http://localhost:8080 — Script Path du job : `tp1/Jenkinsfile`
