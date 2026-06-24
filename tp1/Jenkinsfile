@@ -57,7 +57,15 @@ pipeline {
         }
 
         stage('Push') {
-            when { branch 'main' }
+            when {
+                expression {
+                    def branch = env.BRANCH_NAME ?: sh(
+                        script: 'git rev-parse --abbrev-ref HEAD',
+                        returnStdout: true
+                    ).trim()
+                    return branch == 'main' || branch == 'master'
+                }
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'github-token',
