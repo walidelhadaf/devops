@@ -93,8 +93,23 @@ pipeline {
 
         stage('Quality Gate') {
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                    sh """
+                        echo 'Attente du Quality Gate SonarQube...'
+                        sleep 20
+                        for i in \$(seq 1 36); do
+                          RESPONSE=\$(curl -s -u "\$SONAR_TOKEN:" \\
+                            "http://sonarqube:9000/api/qualitygates/project_status?projectKey=sentiment-ai")
+                          echo "\$RESPONSE"
+                          STATUS=\$(echo "\$RESPONSE" | grep -o '"status":"[^"]*"' | head -1 | cut -d'"' -f4)
+                          echo "Quality Gate status: \$STATUS"
+                          if [ "\$STATUS" = "OK" ]; then exit 0; fi
+                          if [ "\$STATUS" = "ERROR" ]; then exit 1; fi
+                          sleep 10
+                        done
+                        echo 'Timeout: Quality Gate non disponible apres 6 minutes'
+                        exit 1
+                    """
                 }
             }
         }
