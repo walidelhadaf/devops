@@ -66,3 +66,10 @@ venv.bak/
 tp1_git_docker.pdf
 tp2_jenkins.pdf
 tp3_sonarqube.pdf
+tp4_terraform.pdf
+
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+tp1/infra/terraform.tfvars

@@ -1,4 +1,4 @@
-// Jenkinsfile - Pipeline CI/CD SentimentAI (TP3 - 8 stages)
+// Jenkinsfile - Pipeline CI/CD SentimentAI (TP4 - 10 stages)
 pipeline {
     agent any
 
@@ -29,6 +29,16 @@ pipeline {
                     python:3.12-slim \\
                     sh -c "pip install flake8 -q && flake8 src/ --max-line-length=100"
                 """
+            }
+        }
+
+        stage('IaC Validate') {
+            steps {
+                dir("${APP_DIR}/infra") {
+                    sh 'terraform init -backend=false -input=false'
+                    sh 'terraform fmt -check'
+                    sh 'terraform validate'
+                }
             }
         }
 
@@ -163,6 +173,27 @@ pipeline {
             }
         }
 
+        stage('IaC Apply') {
+            when {
+                expression {
+                    def branch = env.BRANCH_NAME ?: sh(
+                        script: 'git rev-parse --abbrev-ref HEAD',
+                        returnStdout: true
+                    ).trim()
+                    return branch == 'main' || branch == 'master'
+                }
+            }
+            steps {
+                dir("${APP_DIR}/infra") {
+                    sh 'terraform init -input=false'
+                    sh """
+                        terraform apply -auto-approve \\
+                            -var='image_tag=${IMAGE_TAG}'
+                    """
+                }
+            }
+        }
+
         stage('Deploy Staging') {
             when {
                 expression {
@@ -174,14 +205,9 @@ pipeline {
                 }
             }
             steps {
-                dir("${APP_DIR}") {
-                    echo "Déploiement de ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} en staging..."
-                    sh """
-                        docker compose -f docker-compose.staging.yml -p staging down 2>/dev/null || true
-                        IMAGE_TAG=${IMAGE_TAG} docker compose -f docker-compose.staging.yml -p staging up -d
-                        echo "Staging disponible sur http://localhost:8001"
-                    """
-                }
+                sh 'sleep 15'
+                sh 'curl -f http://localhost:8001/health'
+                echo 'Staging deploye via Terraform — http://localhost:8001'
             }
         }
     }

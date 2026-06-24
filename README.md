@@ -7,7 +7,7 @@ Dépôt regroupant les 5 TPs DevOps dans un même projet.
 | [tp1/](tp1/) | Git & Docker — SentimentAI | Terminé |
 | [tp2/](tp2/) | Jenkins pipeline | En cours |
 | [tp3/](tp3/) | SonarQube & Trivy | En cours |
-| [tp4/](tp4/) | Terraform IaC | À faire |
+| [tp4/](tp4/) | Terraform IaC | En cours |
 | [tp5/](tp5/) | Monitoring Prometheus/Grafana | À faire |
 
 ## TP1 — Commandes rapides
@@ -47,4 +47,13 @@ cd tp3
 ./setup.sh
 ```
 
-SonarQube : http://localhost:9000 — Pipeline 8 stages dans `tp1/Jenkinsfile`
+SonarQube : http://localhost:9000 — Pipeline 10 stages dans `tp1/Jenkinsfile`
+
+## TP4 — Terraform
+
+```bash
+cd tp1/infra
+export TF_VAR_docker_host="unix://$HOME/.docker/run/docker.sock"
+terraform init && terraform apply
+cd ../../tp4 && ./install-terraform-jenkins.sh
+```

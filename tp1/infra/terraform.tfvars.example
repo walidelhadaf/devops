@@ -1,0 +1,2 @@
+# macOS Docker Desktop — decommenter ou utiliser:
+# docker_host = "unix:///Users/VOTRE_USER/.docker/run/docker.sock"
