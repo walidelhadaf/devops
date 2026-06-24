@@ -6,7 +6,7 @@ Dépôt regroupant les 5 TPs DevOps dans un même projet.
 |---------|-------|--------|
 | [tp1/](tp1/) | Git & Docker — SentimentAI | Terminé |
 | [tp2/](tp2/) | Jenkins pipeline | En cours |
-| [tp3/](tp3/) | SonarQube & Trivy | À faire |
+| [tp3/](tp3/) | SonarQube & Trivy | En cours |
 | [tp4/](tp4/) | Terraform IaC | À faire |
 | [tp5/](tp5/) | Monitoring Prometheus/Grafana | À faire |
 
@@ -39,3 +39,12 @@ make jenkins-password
 ```
 
 Jenkins : http://localhost:8080 — Script Path du job : `tp1/Jenkinsfile`
+
+## TP3 — SonarQube & Trivy
+
+```bash
+cd tp3
+./setup.sh
+```
+
+SonarQube : http://localhost:9000 — Pipeline 8 stages dans `tp1/Jenkinsfile`
