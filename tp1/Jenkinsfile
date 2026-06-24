@@ -36,15 +36,16 @@ pipeline {
                 dir("${APP_DIR}") {
                     sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
                     sh """
-                        docker run --rm \\
-                        -v \$WORKSPACE/${APP_DIR}:/app \\
-                        -w /app \\
-                        ${IMAGE_NAME}:${IMAGE_TAG} \\
-                        pytest tests/ -v \\
-                        --cov=src \\
-                        --cov-report=xml:coverage.xml \\
-                        --cov-report=term-missing \\
-                        --cov-fail-under=70
+                        CID=\$(docker create ${IMAGE_NAME}:${IMAGE_TAG} pytest tests/ -v \\
+                            --cov=src \\
+                            --cov-report=xml:/app/coverage.xml \\
+                            --cov-report=term-missing \\
+                            --cov-fail-under=70)
+                        docker start -a \$CID
+                        EXIT=\$?
+                        docker cp \$CID:/app/coverage.xml coverage.xml 2>/dev/null || true
+                        docker rm -f \$CID >/dev/null
+                        exit \$EXIT
                     """
                 }
             }
