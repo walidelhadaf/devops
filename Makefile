@@ -1,28 +1,19 @@
-IMAGE_NAME = sentiment-ai
-PORT = 8080
+.PHONY: tp1-build tp1-run tp1-test tp1-stop tp1-clean tp1-tag
 
-.PHONY: build run test stop clean tag
+tp1-build:
+	$(MAKE) -C tp1 build
 
-build:
-	docker build -t $(IMAGE_NAME):latest .
+tp1-run:
+	$(MAKE) -C tp1 run
 
-run:
-	docker compose up -d
+tp1-test:
+	$(MAKE) -C tp1 test
 
-test:
-	docker run --rm \
-		-v $(PWD):/app \
-		-w /app \
-		$(IMAGE_NAME):latest \
-		pytest tests/ -v --cov=src --cov-report=term-missing
+tp1-stop:
+	$(MAKE) -C tp1 stop
 
-stop:
-	docker compose down
+tp1-clean:
+	$(MAKE) -C tp1 clean
 
-clean:
-	docker compose down
-	docker rmi $(IMAGE_NAME):latest || true
-
-tag:
-	git tag -a v0.1.0 -m "Initial SentimentAI release"
-	git push origin v0.1.0
+tp1-tag:
+	$(MAKE) -C tp1 tag

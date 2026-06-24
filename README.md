@@ -1,38 +1,30 @@
-# SentimentAI
+# DevOps — Travaux pratiques
 
-API REST d'analyse de sentiments pour StartupIA.
+Dépôt regroupant les 5 TPs DevOps dans un même projet.
 
-## Description
+| Dossier | Sujet | Statut |
+|---------|-------|--------|
+| [tp1/](tp1/) | Git & Docker — SentimentAI | Terminé |
+| [tp2/](tp2/) | Jenkins pipeline | À faire |
+| [tp3/](tp3/) | SonarQube & Trivy | À faire |
+| [tp4/](tp4/) | Terraform IaC | À faire |
+| [tp5/](tp5/) | Monitoring Prometheus/Grafana | À faire |
 
-SentimentAI est une API FastAPI qui reçoit un texte en entrée, l'analyse et retourne un label (`POSITIVE`, `NEGATIVE` ou `NEUTRAL`) accompagné d'un score de confiance entre 0 et 1.
-
-## Démarrage rapide
+## TP1 — Commandes rapides
 
 ```bash
-# Construire l'image Docker
+cd tp1
 make build
-
-# Lancer la stack
-make run
-
-# Lancer les tests
 make test
-
-# Arrêter la stack
+make run
 make stop
 ```
 
-## Endpoints
-
-- `GET /health` — Healthcheck
-- `POST /predict` — Analyse de sentiment
+Depuis la racine :
 
 ```bash
-curl -X POST http://localhost:8080/predict \
-  -H "Content-Type: application/json" \
-  -d '{"text": "Ce produit est excellent !"}'
+make tp1-build
+make tp1-test
+make tp1-run
+make tp1-stop
 ```
-
-## Version
-
-v0.1.0
