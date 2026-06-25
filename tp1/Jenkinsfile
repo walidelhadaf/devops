@@ -1,4 +1,4 @@
-// Jenkinsfile - Pipeline CI/CD SentimentAI (TP4 - 10 stages)
+// Jenkinsfile - Pipeline CI/CD SentimentAI (TP5 - 11 stages)
 pipeline {
     agent any
 
@@ -208,6 +208,42 @@ pipeline {
                 sh 'sleep 15'
                 sh 'curl -f http://localhost:8001/health'
                 echo 'Staging deploye via Terraform — http://localhost:8001'
+            }
+        }
+
+        stage('Smoke Test') {
+            when {
+                expression {
+                    def branch = env.BRANCH_NAME ?: sh(
+                        script: 'git rev-parse --abbrev-ref HEAD',
+                        returnStdout: true
+                    ).trim()
+                    return branch == 'main' || branch == 'master'
+                }
+            }
+            steps {
+                sh '''
+                    echo "Attente demarrage (10s)..."
+                    sleep 10
+                    curl -f http://sentiment-staging:8000/health || exit 1
+                    echo "/health OK"
+                    curl -s http://sentiment-staging:8000/metrics | \
+                        grep -q sentiment_predictions_total || exit 1
+                    echo "/metrics OK — metriques SentimentAI presentes"
+                    sleep 20
+                    curl -s "http://prometheus:9090/api/v1/query?query=up{job='sentiment-ai'}" | \
+                        grep -q '"value":' || exit 1
+                    echo "Prometheus scrape sentiment-ai: UP"
+                    curl -f http://grafana:3000/api/health || exit 1
+                    echo "Grafana OK"
+                '''
+            }
+            post {
+                failure {
+                    sh 'docker logs prometheus 2>&1 | tail -30 || true'
+                    sh 'docker logs sentiment-staging 2>&1 | tail -30 || true'
+                    echo 'Smoke Test KO — voir logs ci-dessus'
+                }
             }
         }
     }
